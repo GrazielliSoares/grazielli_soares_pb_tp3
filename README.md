@@ -1,5 +1,6 @@
 # Projeto de Bloco: Sistema de Atendimento com IA
 
+# TP1
 **Aluno:** Grazielli Soares Pereira
 **Disciplina:** Projeto de Bloco  
 **Professor:** Tiago Xavier
@@ -72,7 +73,7 @@ O siagrama de fluxo de sados (DFD) do sistema está disponível em others/dfd_di
 
 
 
-# Trabalho Prático 2 (TP2)
+#  (TP2)
 
 ### Objetivo do projeto
 
@@ -455,3 +456,374 @@ Os três testes automatizados foram executados com sucesso, confirmando que:
 - A API rejeita campos extras nas requisições utilizando `extra="forbid"`.
 
 Os resultados demonstram o funcionamento dos controles de segurança avaliados.
+
+
+
+
+# Sistema de Atendimento com Inteligência Artificial — TP3
+
+**Projeto de Bloco — Engenharia de Software**
+
+**Aluna:** Grazielli Soares
+
+## 1. Apresentação
+
+Este repositório contém o desenvolvimento do Projeto de Bloco **Sistema de Atendimento com Inteligência Artificial**, realizado ao longo dos Testes de Performance 1, 2 e 3 (TP1, TP2 e TP3).
+
+O projeto utiliza um conjunto de dados de chamados de suporte ao cliente para realizar análises exploratórias, investigar problemas de aprendizado de máquina e desenvolver uma API REST com FastAPI, autenticação JWT e controles de segurança.
+
+O TP3 dá continuidade às entregas anteriores, acrescentando experimentos de regressão linear, formalização de um problema de classificação textual, testes automatizados de segurança, integração contínua com GitHub Actions, auditoria passiva com OWASP ZAP e planejamento das próximas etapas.
+
+## 2. Tecnologias utilizadas
+
+- Python 3.13
+- Pandas e NumPy
+- Matplotlib e Seaborn
+- Scikit-learn
+- Jupyter Notebook
+- FastAPI e Uvicorn
+- SQLite e SQLModel
+- JWT e OAuth2
+- Pydantic
+- SlowAPI
+- Pytest e HTTPX
+- OWASP ZAP
+- Git e GitHub Actions
+
+## 3. Dataset
+
+Foi utilizado o **Customer Support Ticket Dataset**, disponibilizado na plataforma Kaggle.
+
+O conjunto de dados contém informações relacionadas a chamados de atendimento ao cliente, incluindo:
+
+- Tipo de chamado
+- Assunto e descrição
+- Prioridade
+- Canal de atendimento
+- Informações do cliente
+- Status e resolução
+- Avaliação de satisfação
+
+O arquivo utilizado no projeto está localizado em:
+
+`data/customer_support_tickets.csv`
+
+Nas análises de classificação foram considerados **8.469 registros válidos**.
+
+## 4. Evolução do projeto
+
+### TP1 — Análise exploratória inicial
+
+No primeiro Teste de Performance foram realizadas atividades de compreensão do problema e exploração inicial do dataset.
+
+As análises incluíram:
+
+- Inspeção da estrutura dos dados.
+- Identificação de valores ausentes e duplicados.
+- Limpeza e preparação de variáveis.
+- Análise univariada.
+- Visualização da distribuição dos tipos de chamados.
+- Análise de prioridades, canais de atendimento e satisfação.
+- Formulação de hipóteses sobre as intenções dos usuários.
+
+Também foi iniciada a construção da API de atendimento com FastAPI.
+
+### TP2 — Análise estatística e segurança da API
+
+O segundo Teste de Performance ampliou a análise exploratória e os controles de segurança da aplicação.
+
+Foram realizadas:
+
+- Análises multivariadas e correlações.
+- Testes estatísticos com Mann-Whitney.
+- Identificação de outliers pelo método IQR.
+- Documentação das conclusões do EDA.
+- Persistência de dados com SQLite.
+- Autenticação baseada em JWT.
+- Proteção contra acesso indevido a registros de outros usuários.
+- Validação de entradas com Pydantic.
+- Configuração de CORS e cabeçalhos HTTP de segurança.
+- Limitação de requisições com SlowAPI.
+- Verificações de segurança com OWASP ZAP.
+
+### TP3 — Regressão, classificação e validação de segurança
+
+O terceiro Teste de Performance compreende seis exercícios.
+
+#### Exercício 1 — Regressão Linear
+
+Foi desenvolvido um experimento de regressão linear para prever a quantidade de palavras na descrição dos chamados.
+
+**Variável-alvo:** quantidade de palavras em `Ticket Description`.
+
+Foram utilizadas características do cliente e do chamado como variáveis explicativas.
+
+Resultados obtidos:
+
+| Métrica | Resultado |
+|---|---:|
+| R² | -0,0005 |
+| RMSE | 8,7156 palavras |
+
+Também foram produzidos gráficos de resíduos e Q-Q plot.
+
+O desempenho observado indica que as variáveis selecionadas possuem baixa capacidade explicativa para a quantidade de palavras das descrições.
+
+O experimento demonstra as limitações da regressão linear para o problema proposto, cujo objetivo principal é identificar categorias de intenção.
+
+#### Exercício 2 — Formalização da classificação
+
+O problema foi definido como uma **classificação supervisionada multiclasse**.
+
+- **Entrada (X):** texto de `Ticket Description`.
+- **Saída (y):** categoria de `Ticket Type`.
+
+Distribuição das classes:
+
+| Categoria | Registros | Percentual |
+|---|---:|---:|
+| Refund request | 1.752 | 20,69% |
+| Technical issue | 1.747 | 20,63% |
+| Cancellation request | 1.695 | 20,01% |
+| Product inquiry | 1.641 | 19,38% |
+| Billing inquiry | 1.634 | 19,29% |
+
+As cinco categorias apresentam distribuição relativamente equilibrada.
+
+A coluna `Ticket Type` foi adotada como aproximação da intenção do usuário, reconhecendo-se que uma classificação administrativa não corresponde necessariamente à intenção semântica expressa no texto.
+
+#### Exercício 3 — Testes automatizados de segurança
+
+Foram implementados seis testes automatizados utilizando Pytest e TestClient.
+
+| Teste | Verificação |
+|---|---|
+| Acesso sem token | Rejeição de acesso não autenticado |
+| Acesso a registro de outro usuário | Proteção contra BOLA |
+| Campo extra na requisição | Validação Pydantic |
+| Credenciais inválidas | Rejeição de autenticação incorreta |
+| Credenciais válidas | Emissão de token JWT |
+| Rate limiting | Bloqueio após excesso de tentativas |
+
+**Resultado local:** 6 testes aprovados.
+
+Os testes utilizam um banco SQLite em memória, evitando alterações no banco principal da aplicação.
+
+#### Exercício 4 — Integração contínua
+
+Foi configurado um workflow do GitHub Actions para executar automaticamente os testes de segurança.
+
+O workflow realiza:
+
+1. Checkout do repositório.
+2. Configuração do Python 3.13.
+3. Instalação das dependências.
+4. Execução do Pytest.
+5. Sinalização de falha caso algum teste não seja aprovado.
+
+**Observação:** a configuração foi preparada localmente; sua execução no GitHub Actions deverá ser validada após o envio ao repositório remoto.
+
+#### Exercício 5 — Auditoria passiva com OWASP ZAP
+
+Foi realizada uma auditoria passiva da API utilizando o OWASP ZAP.
+
+Durante as verificações foram identificados alertas relacionados a recursos externos, políticas de segurança e bibliotecas JavaScript.
+
+As melhorias implementadas incluíram:
+
+- Ajuste da Content Security Policy (CSP).
+- Hospedagem local dos arquivos do Swagger UI.
+- Atualização do Swagger UI para a versão 5.35.0.
+- Preservação dos cabeçalhos HTTP de segurança.
+- Reexecução dos testes automatizados após as alterações.
+
+Na sessão final analisada, foram observados:
+
+| Nível de risco | Tipos de alertas |
+|---|---:|
+| Alto | 0 |
+| Médio | 0 |
+| Baixo | 1 |
+| Informativo | 1 |
+
+O resultado corresponde às requisições observadas durante a auditoria passiva e não representa garantia de ausência de vulnerabilidades.
+
+As evidências e o relatório estão disponíveis na pasta `zap/`.
+
+#### Exercício 6 — Planejamento
+
+Foi elaborado um documento de planejamento para a evolução do sistema.
+
+A abordagem inicialmente proposta utiliza:
+
+- **CountVectorizer** para representação numérica das mensagens.
+- **LogisticRegression** como algoritmo candidato de classificação.
+- **Pipeline** do scikit-learn para integração das etapas.
+- Avaliação com acurácia, precisão, recall, F1-score e matriz de confusão.
+
+O documento também estabelece um escopo preliminar de testes de segurança para TP4 e TP5, limitado ao ambiente autorizado.
+
+O planejamento está disponível em:
+
+`others/planejamento.md`
+
+## 5. Estrutura principal do projeto
+
+```text
+grazielli_soares_pb_tp3/
+├── .github/
+│   └── workflows/
+│       └── testes.yml
+├── data/
+│   └── customer_support_tickets.csv
+├── eda/
+│   └── eda_tp3.ipynb
+├── fastapi/
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── database.db
+│   ├── routes/
+│   ├── models/
+│   ├── security/
+│   ├── static/
+│   │   └── swagger/
+│   └── tests/
+│       └── test_security.py
+├── others/
+│   └── planejamento.md
+├── zap/
+│   ├── evidencia_alertas_finais_tp3.png
+│   ├── relatorio_zap_tp3.html
+│   └── scan_passivo_zap_TP3.md
+└── README.md
+```
+
+Outros arquivos auxiliares de configuração, banco de dados e documentação podem estar presentes nas respectivas pastas.
+
+## 6. Como executar a API
+
+### Pré-requisitos
+
+- Python 3.13
+- Git
+- Dependências Python descritas em `requirements.txt`
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/GrazielliSoares/grazielli_soares_pb_tp3.git
+```
+
+Entre na pasta da API:
+
+```bash
+cd grazielli_soares_pb_tp3/fastapi
+```
+
+Crie um ambiente virtual:
+
+```bash
+python -m venv .venv
+```
+
+Ative o ambiente virtual no PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Instale as dependências:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Configure as variáveis de ambiente necessárias para a autenticação, conforme as configurações da aplicação.
+
+Inicie o servidor:
+
+```bash
+python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+A documentação interativa estará disponível em:
+
+http://127.0.0.1:8000/docs
+
+O esquema OpenAPI poderá ser consultado em:
+
+http://127.0.0.1:8000/openapi.json
+
+## 7. Endpoints da API
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/auth/token` | Autenticação e emissão de JWT |
+| GET | `/health` | Verificação do funcionamento |
+| POST | `/predict` | Endpoint de previsão/classificação |
+| GET | `/predictions/{prediction_id}` | Consulta de previsão registrada |
+
+Os endpoints protegidos exigem autenticação.
+
+A implementação do classificador textual com CountVectorizer e LogisticRegression está prevista para uma etapa futura. O planejamento do modelo não deve ser confundido com um classificador já treinado e integrado à API.
+
+## 8. Como executar os testes
+
+No terminal, dentro da pasta `fastapi`, execute:
+
+```bash
+python -m pytest tests/ -v
+```
+
+O resultado local validado durante o TP3 foi:
+
+```text
+6 passed
+```
+
+Os testes verificam controles relacionados a autenticação, autorização, validação de dados e limitação de requisições.
+
+## 9. Análise exploratória
+
+O notebook:
+
+`eda/eda_tp3.ipynb`
+
+Reúne as análises dos três Testes de Performance em um único arquivo.
+
+Sua organização contempla:
+
+- TP1 — Análise exploratória inicial.
+- TP2 — Análise estatística e aprofundamento do EDA.
+- TP3 — Regressão linear, classificação e documentação dos testes.
+
+O notebook pode ser aberto no Jupyter Notebook ou no Visual Studio Code com a extensão Jupyter.
+
+## 10. Segurança e limitações
+
+O projeto incorpora controles de autenticação, autorização, validação de dados, limitação de requisições e cabeçalhos HTTP de segurança.
+
+A auditoria realizada com OWASP ZAP foi passiva e limitada às requisições efetivamente observadas.
+
+O endereço `127.0.0.1` representa o ambiente local de desenvolvimento e não autoriza a execução de testes em sistemas externos.
+
+As credenciais, tokens e chaves secretas reais não devem ser publicados no repositório.
+
+## 11. Próximas etapas
+
+As próximas entregas poderão incluir:
+
+- Implementação do classificador de intenções.
+- Treinamento e avaliação do modelo.
+- Integração do pipeline à API.
+- Ampliação dos testes automatizados.
+- Testes de segurança adicionais em ambiente autorizado.
+- Aprimoramento da documentação técnica.
+
+## 12. Conclusão
+
+O TP3 consolida a evolução do Sistema de Atendimento com Inteligência Artificial, integrando análise exploratória de dados, experimentação com aprendizado de máquina, desenvolvimento de API e práticas de segurança de software.
+
+Os experimentos realizados fundamentam a escolha de um problema de classificação textual, enquanto os testes automatizados e a auditoria passiva contribuem para a validação dos controles de segurança implementados.
+
+O projeto estabelece uma base para a futura implementação de um classificador de intenções integrado à API FastAPI.
